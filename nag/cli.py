@@ -10,9 +10,10 @@ def nag():
 @click.argument('start_time')
 @click.argument('end_time')
 @click.argument('task_name')
-def block(start_time, end_time, task_name):
-    """Add a time block to your schedule."""
-    add_task(start_time, end_time, task_name)
+@click.argument('task_date', required=False, default="today")
+def block(start_time, end_time, task_name, task_date):
+    """Add a time block to your schedule with an optional date (default: today)."""
+    add_task(start_time, end_time, task_name, task_date)
 
 @nag.command()
 @click.argument('start_time')
@@ -23,9 +24,10 @@ def annotate(start_time, end_time, annotation):
     annotate_task(start_time, end_time, annotation)
 
 @nag.command()
-def show():
-    """Show the current day's timeline."""
-    show_timeline()
+@click.argument('date', required=False, default="today")
+def show(date):
+    """Show the timeline for the given date (default: today)."""
+    show_timeline(date)
 
 if __name__ == "__main__":
     nag()
