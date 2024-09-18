@@ -259,6 +259,19 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sqlite-vec"
+version = "0.1.2"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "sqlite_vec-0.1.2-py3-none-macosx_10_6_x86_64.whl", hash = "sha256:8e55ed19f55078048df4f1a5fded343940384a69dd3e093a3633b8ab8c8a8d8b"},
+    {file = "sqlite_vec-0.1.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:ea79389e4c16e5c0b5ee52099796705db52032219d669ee72c8ca299dd2f1754"},
+    {file = "sqlite_vec-0.1.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl", hash = "sha256:5db255c0dc060d3675b8d7906c3511d4f7143e846b8e50a047aae8869b30436f"},
+    {file = "sqlite_vec-0.1.2-py3-none-win_amd64.whl", hash = "sha256:d473e62ef22c67eb19bbf51ee50999753cd3cc3e0d458411039c7b5518e10fc8"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -272,4 +285,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "18145172ce91a8fa69a54c7c73747313c5b594b568d4b55ec8a34cadcce4f1d6"
+content-hash = "d79cbabcebe60bb50eff0a5fba1032f08c754527f59743d3c46106b03bb06851"

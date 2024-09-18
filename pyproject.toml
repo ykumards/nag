@@ -11,6 +11,7 @@ python = "^3.11"
 click = "^8.1.7"
 rich = "^13.8.1"
 sqlalchemy = "^2.0.35"
+sqlite-vec = "^0.1.2"
 
 
 [build-system]

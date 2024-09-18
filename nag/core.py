@@ -52,7 +52,7 @@ def add_task(start_time, end_time, task_name, task_date="today"):
 
     # Ensure the date is in the future
     today = datetime.now().strftime("%Y-%m-%d")
-    if date <= today:
+    if date < today:
         console.print(f"[red]Error:[/red] You can only schedule tasks for future dates!")
         return
 
