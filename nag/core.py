@@ -67,19 +67,19 @@ def add_task(start_time, end_time, task_name, task_date="today"):
     console.print(f"[green]Task added:[/green] {task_name} from {start_time} to {end_time} on {date}")
 
 
-def annotate_task(start_time, end_time, annotation):
-    """Annotate a task."""
-    date = datetime.now().strftime("%Y-%m-%d")
+def annotate_task(row_id, annotation):
+    """Annotate a task by its row ID."""
     with get_db_connection() as (conn, c):
         c.execute('''
             UPDATE tasks
             SET annotation = ?
-            WHERE start_time = ? AND end_time = ? AND date = ?
-        ''', (annotation, start_time, end_time, date))
+            WHERE rowid = ?
+        ''', (annotation, row_id))
+
         if c.rowcount > 0:
-            console.print(f"[cyan]Task from {start_time} to {end_time} on {date} annotated:[/cyan] {annotation}")
+            console.print(f"[cyan]Task with ID {row_id} annotated:[/cyan] {annotation}")
         else:
-            console.print(f"[red]No task found from {start_time} to {end_time} on {date}")
+            console.print(f"[red]No task found with ID {row_id}")
 
 
 def show_timeline(date_input="today"):
@@ -93,9 +93,9 @@ def show_timeline(date_input="today"):
     now = datetime.now().strftime("%H:%M")
 
     with get_db_connection() as (conn, c):
-        # Fetch tasks for the specified date
+        # Fetch tasks for the specified date, including the rowid
         c.execute('''
-            SELECT start_time, end_time, task_name, status, annotation
+            SELECT rowid, start_time, end_time, task_name, status, annotation
             FROM tasks
             WHERE date = ?
             ORDER BY start_time
@@ -104,16 +104,17 @@ def show_timeline(date_input="today"):
 
     # Display using Rich
     table = Table(title=f"\nNag 🐍️ - Schedule for {date}\n(Current Time: {now})")
+    table.add_column("ID", justify="center", style="cyan", no_wrap=True)
     table.add_column("Time Block", justify="center", style="cyan")
     table.add_column("Task", justify="left", style="magenta")
     table.add_column("Status", justify="center", style="green")
+    table.add_column("Notes", justify="left", style="dim cyan")
 
     if not tasks:
         console.print(f"[yellow]No tasks scheduled for {date}.[/yellow]")
         return
 
-    for task in tasks:
-        start, end, task_name, status, annotation = task
+    for rowid, start, end, task_name, status, annotation in tasks:
         if start <= now <= end and date == datetime.now().strftime("%Y-%m-%d"):
             status = "[bold green]In Progress[/bold green]"
         elif now > end and date == datetime.now().strftime("%Y-%m-%d"):
@@ -121,6 +122,6 @@ def show_timeline(date_input="today"):
         else:
             status = "[yellow]Upcoming[/yellow]"
 
-        table.add_row(f"{start} - {end}", task_name, status)
+        table.add_row(f"{rowid}", f"{start} - {end}", task_name, status, annotation)
 
     console.print(table)
