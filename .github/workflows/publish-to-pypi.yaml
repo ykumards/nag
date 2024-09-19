@@ -3,7 +3,7 @@ name: Publish Python Package
 on:
     push:
         tags:
-            - 'v*'  # Triggers on tags that start with 'v', e.g., 'v1.0.0'
+            - 'v*'  # Triggers only on tags that start with 'v', e.g., 'v1.1.0'
 
 jobs:
     publish:
@@ -21,23 +21,7 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install poetry bump2version
-
-            - name: Update version in pyproject.toml based on tag
-              run: |
-                  TAG_NAME=${GITHUB_REF#refs/tags/}
-                  bump2version --new-version $TAG_NAME --allow-dirty --no-tag --no-commit
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Commit version bump
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git commit -am "Bump version to $TAG_NAME"
-                  git push
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  pip install poetry
 
             - name: Build the package
               run: poetry build
