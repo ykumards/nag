@@ -1,106 +1,50 @@
-import sqlite3
-from pathlib import Path
+from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-from datetime import datetime, timedelta
-from contextlib import contextmanager
 
+from .db import insert_task, update_task_annotation, fetch_tasks_by_date
 from .helpers import parse_date
-
-# Path to the .nag directory and the SQLite database
-NAG_DIR = Path.home() / '.nag'
-DB_FILE = NAG_DIR / 'nag_tasks.db'
-
-# Ensure the directory and database are created
-NAG_DIR.mkdir(exist_ok=True)
 
 console = Console()
 
-@contextmanager
-def get_db_connection():
-    """Context manager for SQLite database connection and cursor with table creation check."""
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-
-    # Ensure the 'tasks' table is created on the first run
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT NOT NULL,
-            start_time TEXT NOT NULL,
-            end_time TEXT NOT NULL,
-            task_name TEXT NOT NULL,
-            status TEXT NOT NULL,
-            annotation TEXT
-        )
-    ''')
-
-    try:
-        yield conn, c  # Provide the connection and cursor to the calling function
-    finally:
-        conn.commit()  # Commit the changes (if any)
-        conn.close()  # Ensure the connection is always closed
-
+def validate_date(task_date):
+    """Validate if the task date is in the future or today."""
+    date = parse_date(task_date)
+    if not date:
+        console.print(f"[red]Invalid date format![/red] Use MM/DD, DD/MM, or 'today', 'yesterday', 'tomorrow'.")
+        return None
+    today = datetime.now().strftime("%Y-%m-%d")
+    if date < today:
+        console.print(f"[red]Error:[/red] You can only schedule tasks for today or future dates!")
+        return None
+    return date
 
 def add_task(start_time, end_time, task_name, task_date="today"):
     """Add a new task to the schedule, with an optional future date (default: today)."""
-    date = parse_date(task_date)  # Parse the provided date or use "tomorrow" as default
-
+    date = validate_date(task_date)
     if not date:
-        console.print(f"[red]Invalid date format![/red] Use MM/DD, DD/MM, or 'tomorrow'.")
-        return
-
-    # Ensure the date is in the future
-    today = datetime.now().strftime("%Y-%m-%d")
-    if date < today:
-        console.print(f"[red]Error:[/red] You can only schedule tasks for future dates!")
         return
 
     # Add the task to the database
-    status = 'upcoming'
-    with get_db_connection() as (conn, c):
-        c.execute('''
-            INSERT INTO tasks (date, start_time, end_time, task_name, status)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (date, start_time, end_time, task_name, status))
-
+    insert_task(date, start_time, end_time, task_name, "upcoming")
     console.print(f"[green]Task added:[/green] {task_name} from {start_time} to {end_time} on {date}")
-
 
 def annotate_task(row_id, annotation):
     """Annotate a task by its row ID."""
-    with get_db_connection() as (conn, c):
-        c.execute('''
-            UPDATE tasks
-            SET annotation = ?
-            WHERE rowid = ?
-        ''', (annotation, row_id))
-
-        if c.rowcount > 0:
-            console.print(f"[cyan]Task with ID {row_id} annotated:[/cyan] {annotation}")
-        else:
-            console.print(f"[red]No task found with ID {row_id}")
-
+    if update_task_annotation(row_id, annotation):
+        console.print(f"[cyan]Task with ID {row_id} annotated:[/cyan] {annotation}")
+    else:
+        console.print(f"[red]No task found with ID {row_id}")
 
 def show_timeline(date_input="today"):
     """Show the timeline for a specific date, defaulting to today if no date is specified."""
     date = parse_date(date_input)
-
     if not date:
         console.print(f"[red]Invalid date format![/red] Use MM/DD, DD/MM, or 'today', 'yesterday', 'tomorrow'.")
         return
 
     now = datetime.now().strftime("%H:%M")
-
-    with get_db_connection() as (conn, c):
-        # Fetch tasks for the specified date, including the rowid
-        c.execute('''
-            SELECT rowid, start_time, end_time, task_name, status, annotation
-            FROM tasks
-            WHERE date = ?
-            ORDER BY start_time
-        ''', (date,))
-        tasks = c.fetchall()
+    tasks = fetch_tasks_by_date(date)
 
     # Display using Rich
     table = Table(title=f"\nNag 🐍️ - Schedule for {date}\n(Current Time: {now})")
@@ -122,6 +66,6 @@ def show_timeline(date_input="today"):
         else:
             status = "[yellow]Upcoming[/yellow]"
 
-        table.add_row(f"{rowid}", f"{start} - {end}", task_name, status, annotation)
+        table.add_row(f"{rowid}", f"{start} - {end}", task_name, status, annotation or "")
 
     console.print(table)
