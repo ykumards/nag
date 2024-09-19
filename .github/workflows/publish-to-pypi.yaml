@@ -26,7 +26,7 @@ jobs:
             - name: Update version in pyproject.toml based on tag
               run: |
                   TAG_NAME=${GITHUB_REF#refs/tags/}
-                  bump2version --new-version $TAG_NAME --allow-dirty --no-commit
+                  bump2version --new-version $TAG_NAME --allow-dirty --no-tag --no-commit
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
