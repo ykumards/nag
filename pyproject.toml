@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "nag"
-version = "0.1.0"
+version = "0.1.0a1"
 description = "A command line time blocker that nags you to get things done"
-authors = ["Yogesh Kumar <ykumar@nyu.edu>"]
+authors = ["Yogesh Kumar <ykumards@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
@@ -13,6 +13,9 @@ rich = "^13.8.1"
 sqlalchemy = "^2.0.35"
 sqlite-vec = "^0.1.2"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
 
 [build-system]
 requires = ["poetry-core"]
