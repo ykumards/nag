@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'  # Triggers only on tags that start with 'v', e.g., 'v1.1.0'
 
+permissions:
+  id-token: write  # Required for OIDC token issuance
+  contents: read   # Required to read the repository contents
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -32,11 +36,11 @@ jobs:
         if: success()
         run: poetry build
 
-      - name: Publish to PyPI
+      - name: Publish to PyPI using OIDC
         if: success()
         env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          TWINE_USERNAME: __token__  # This tells Twine to use the OIDC token
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
         run: |
           pip install twine
           twine upload dist/* --skip-existing
