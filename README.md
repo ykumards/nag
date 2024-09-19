@@ -1,5 +1,10 @@
 # nag 🐍️
 
+![Tests](https://github.com/ykumards/nag/actions/workflows/test.yml/badge.svg)
+[![Version](https://img.shields.io/pypi/v/nag.svg)](https://pypi.org/project/nag/)
+[![Downloads](https://static.pepy.tech/badge/nag)](https://pepy.tech/project/nag)
+
+
 **nag** is a command-line time-blocking tool designed to help you organize your day with time blocks. Add tasks to your schedule, annotate them, and display your timeline — all from the terminal.
 
 ## Features
