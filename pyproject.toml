@@ -6,6 +6,9 @@ description = "A command line time blocker that nags you to get things done"
 authors = ["Yogesh Kumar <ykumards@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/ykumards/nag"
+repository = "https://github.com/ykumards/nag"
+keywords = ["productivity", "time management", "nag", "CLI", "time blocker"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
