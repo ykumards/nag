@@ -39,8 +39,7 @@ jobs:
       - name: Publish to PyPI using OIDC
         if: success()
         env:
-          TWINE_USERNAME: __token__  # This tells Twine to use the OIDC token
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_USERNAME: __token__
         run: |
           pip install twine
           twine upload dist/* --skip-existing
