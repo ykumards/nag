@@ -1,17 +1,53 @@
 import sqlite3
 from pathlib import Path
+import yaml
 
 # Path to the .nag directory and the SQLite database
 NAG_DIR = Path.home() / '.nag'
-DB_FILE = NAG_DIR / 'nag_tasks.db'
+CONFIG_FILE = NAG_DIR / 'nag.yaml'
 
-# Ensure the directory and database are created
-NAG_DIR.mkdir(exist_ok=True)
+default_config = {
+    'database': {
+        'name': 'nag_tasks.db',
+        'location': str(NAG_DIR),
+    }
+}
+
+def load_config():
+    """Load the config file, create default config if it doesn't exist."""
+    if not CONFIG_FILE.exists():
+        # Create the .nag directory if it doesn't exist
+        NAG_DIR.mkdir(exist_ok=True)
+
+        # Write the default config to the nag.yaml file
+        with open(CONFIG_FILE, 'w') as f:
+            yaml.dump(default_config, f)
+
+    # Load the config from the yaml file
+    with open(CONFIG_FILE, 'r') as f:
+        config = yaml.safe_load(f)
+
+    return config
+
+def get_db_path():
+    """Get the full database path from the config."""
+    config = load_config()
+
+    # Combine the location and name of the database from the config
+    db_location = Path(config['database']['location'])
+    db_name = config['database']['name']
+
+    return db_location / db_name
 
 
 def get_db_connection():
-    """Get the SQLite database connection."""
-    conn = sqlite3.connect(DB_FILE)
+    """Get the SQLite database connection using the path from the config."""
+    db_file = get_db_path()
+
+    # Ensure the .nag directory and database path exist
+    db_file.parent.mkdir(exist_ok=True, parents=True)
+
+    conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
     # Ensure the 'tasks' table is created on the first run
