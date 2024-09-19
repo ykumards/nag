@@ -104,6 +104,34 @@ def update_task_annotation(row_id, annotation, connection=None):
             conn.commit()
             conn.close()
 
+def delete_task_by_id(row_id, connection=None):
+    """Delete a task by its row ID, optionally using a passed connection."""
+    (conn, c), close_connection = get_connection_or_default(connection)
+
+    try:
+        c.execute('DELETE FROM tasks WHERE rowid = ?', (row_id,))
+        return c.rowcount > 0  # Return True if a row was deleted
+    finally:
+        if close_connection:
+            conn.commit()
+            conn.close()
+
+
+def mark_task_done_by_id(row_id, connection=None):
+    """Mark a task as done by its row ID."""
+    (conn, c), close_connection = get_connection_or_default(connection)
+
+    try:
+        c.execute('''
+            UPDATE tasks
+            SET status = 'done'
+            WHERE rowid = ?
+        ''', (row_id,))
+        return c.rowcount > 0
+    finally:
+        if close_connection:
+            conn.commit()
+            conn.close()
 
 def fetch_tasks_by_date(date, connection=None):
     """Fetch tasks for a specific date, optionally using a passed connection."""

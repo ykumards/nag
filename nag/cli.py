@@ -1,5 +1,5 @@
 import click
-from .core import add_task, annotate_task, show_timeline
+from .core import add_task, annotate_task, delete_task, show_timeline, mark_task_done
 
 @click.group()
 def nag():
@@ -27,6 +27,18 @@ def block(start_time, end_time, task_name, task_date):
 def annotate(row_id, annotation):
     """Annotate an existing time block using its ID."""
     annotate_task(row_id, annotation)
+
+@nag.command()
+@click.argument('row_id', metavar='<row_id>')
+def delete(row_id):
+    """Delete a time block using its ID."""
+    delete_task(row_id)
+
+@nag.command()
+@click.argument('row_id', metavar='<row_id>')
+def done(row_id):
+    """Mark a time block as done using its ID."""
+    mark_task_done(row_id)
 
 @nag.command()
 @click.option(

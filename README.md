@@ -53,15 +53,7 @@ This will add a task from 9:00 AM to 10:00 AM with the description "Meeting with
 nag block 09:00 10:00 "Meeting with team" --task-date 09/19
 ```
 
-#### 2. Annotating a task
-
-To annotate an existing task using its ID (as shown in the timeline):
-
-```bash
-nag annotate <task_id> "Discussed project progress."
-```
-
-#### 3. Showing your schedule
+#### 2. Showing your schedule
 
 To view your schedule for today:
 
@@ -73,6 +65,30 @@ You can also show the schedule for a specific date:
 
 ```bash
 nag show --date 09/19
+```
+
+#### 3. Annotating a task
+
+To annotate an existing task using its ID (as shown in the timeline):
+
+```bash
+nag annotate <task_id> "Discussed project progress."
+```
+
+#### 4. Mark task as DONE
+
+To mark a task as DONE:
+
+```bash
+nag done <task_id>
+```
+
+#### 5. Delete task
+
+To delete a task using its ID:
+
+```bash
+nag delete <task_id>
 ```
 
 #### Help
@@ -94,14 +110,19 @@ Options:
 Commands:
   annotate  Annotate an existing time block using its ID.
   block     Add a time block to your schedule with an optional date.
+  delete    Delete a time block using its ID.
+  done      Mark a time block as done using its ID.
   show      Show the timeline for the given date.
 ```
 
-For specific commands, such as block or show, you can also run:
+For specific commands, you can also run:
 
-```bash
+```
 nag block --help
 nag show --help
+nag annotate --help
+nag done --help
+nag delete --help
 ```
 
 ## Contributing

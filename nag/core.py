@@ -2,7 +2,7 @@ from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 
-from .db import insert_task, update_task_annotation, fetch_tasks_by_date
+from .db import insert_task, update_task_annotation, fetch_tasks_by_date, delete_task_by_id, mark_task_done_by_id
 from .helpers import parse_date
 
 console = Console()
@@ -36,9 +36,26 @@ def annotate_task(row_id, annotation):
     else:
         console.print(f"[red]No task found with ID {row_id}")
 
+def delete_task(row_id):
+    """Delete a task by its row ID."""
+    if delete_task_by_id(row_id):
+        console.print(f"[green]Task with ID {row_id} has been deleted.[/green]")
+        return True
+    else:
+        console.print(f"[red]No task found with ID {row_id}.")
+        return False
+
+def mark_task_done(row_id):
+    """Mark a task as done."""
+    if mark_task_done_by_id(row_id):
+        console.print(f"[green]Task with ID {row_id} has been marked as done.[/green]")
+    else:
+        console.print(f"[red]No task found with ID {row_id}.")
+
 def show_timeline(date_input="today"):
     """Show the timeline for a specific date, defaulting to today if no date is specified."""
     date = parse_date(date_input)
+
     if not date:
         console.print(f"[red]Invalid date format![/red] Use MM/DD, DD/MM, or 'today', 'yesterday', 'tomorrow'.")
         return
@@ -58,7 +75,11 @@ def show_timeline(date_input="today"):
         console.print(f"[yellow]No tasks scheduled for {date}.[/yellow]")
         return
 
+    # First, add upcoming and in-progress tasks
     for rowid, start, end, task_name, status, annotation in tasks:
+        if status == 'done':
+            continue  # Skip done tasks for now
+
         if start <= now <= end and date == datetime.now().strftime("%Y-%m-%d"):
             status = "[bold green]In Progress[/bold green]"
         elif now > end and date == datetime.now().strftime("%Y-%m-%d"):
@@ -66,6 +87,12 @@ def show_timeline(date_input="today"):
         else:
             status = "[yellow]Upcoming[/yellow]"
 
-        table.add_row(f"{rowid}", f"{start} - {end}", task_name, status, annotation or "")
+        table.add_row(f"{rowid}", f"{start} - {end}", task_name, status, annotation)
+
+    # Now, add the done tasks at the bottom
+    for rowid, start, end, task_name, status, annotation in tasks:
+        if status == 'done':
+            status = "[dim]Done[/dim]"
+            table.add_row(f"[dim]{rowid}[/dim]", f"[dim]{start} - {end}[/dim]", f"[dim]{task_name}[/dim]", status, annotation)
 
     console.print(table)
