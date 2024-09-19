@@ -38,38 +38,18 @@ jobs:
         if: success()
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      - name: Create GitHub Release
-        if: success()
-        id: create_release
+      - name: Create Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Pass the GitHub token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}  # Use the current tag
-          release_name: Release ${{ github.ref }}  # Name the release
-          body: |
-            Automated release for version ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
-          prerelease: false
+          prerelease: true
 
-      - name: List dist contents for debugging
-        if: success()
-        run: ls -al dist/
-
-      - name: Upload .whl to GitHub Release
-        if: success()
-        uses: actions/upload-release-asset@v1
+      - name: Upload Release Assets
+        uses: AButler/upload-release-assets@v3.0
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*.whl  # This will match the actual file in the dist/ folder
-          asset_name: nag-${{ github.ref }}.whl  # Use dynamic name based on tag/version
-          asset_content_type: application/zip
-
-      - name: Upload .tar.gz to GitHub Release
-        if: success()
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*.tar.gz  # Match the tar.gz file
-          asset_name: nag-${{ github.ref }}.tar.gz
-          asset_content_type: application/gzip
+          files: "dist/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
