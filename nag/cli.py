@@ -11,15 +11,15 @@ def nag():
 @click.argument('end_time', metavar='<end_time>')
 @click.argument('task_name', metavar='<task_name>')
 @click.option(
-    '--task-date',
+    '--date',
     default="today",
     show_default=True,
     metavar='<task_date>',
     help="The date for the task (optional, defaults to 'today'). Format: 'MM/DD', 'DD/MM', or 'today', 'tomorrow'.",
 )
-def block(start_time, end_time, task_name, task_date):
+def block(start_time, end_time, task_name, date):
     """Add a time block to your schedule with an optional date."""
-    add_task(start_time, end_time, task_name, task_date)
+    add_task(start_time, end_time, task_name, date)
 
 @nag.command()
 @click.argument('row_id', metavar='<row_id>')
