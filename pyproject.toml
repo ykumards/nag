@@ -1,7 +1,7 @@
 
 [tool.poetry]
 name = "nag"
-version = "0.2.2a"
+version = "0.2.3a"
 description = "A command line time blocker that nags you to get things done"
 authors = ["Yogesh Kumar <ykumards@gmail.com>"]
 license = "MIT"
