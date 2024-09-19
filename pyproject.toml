@@ -1,3 +1,4 @@
+
 [tool.poetry]
 name = "nag"
 version = "0.2.2a"
@@ -14,7 +15,6 @@ sqlalchemy = "^2.0.35"
 sqlite-vec = "^0.1.2"
 pyyaml = "^6.0.2"
 bump2version = "^1.0.1"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
