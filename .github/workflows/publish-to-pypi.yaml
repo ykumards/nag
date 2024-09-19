@@ -3,15 +3,14 @@ name: Publish Python Package
 on:
   push:
     tags:
-      - 'v*'  # Triggers only on tags that start with 'v', e.g., 'v1.1.0'
-
-permissions:
-  id-token: write  # Required for OIDC token issuance
-  contents: read   # Required to read the repository contents
+      - 'v*'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for trusted publishing
+      contents: read
 
     steps:
       - name: Checkout code
@@ -29,17 +28,12 @@ jobs:
           poetry install
 
       - name: Run Tests
-        run: |
-          poetry run pytest
+        run: poetry run pytest
 
       - name: Build the package
         if: success()
         run: poetry build
 
-      - name: Publish to PyPI using OIDC
+      - name: Publish to PyPI
         if: success()
-        env:
-          TWINE_USERNAME: __token__  # Use OIDC for authentication
-        run: |
-          pip install twine
-          twine upload dist/* --skip-existing --verbose
+        uses: pypa/gh-action-pypi-publish@release/v1
