@@ -34,6 +34,10 @@ jobs:
         if: success()
         run: poetry build
 
+      - name: Extract Tag Name
+        id: extract_tag
+        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+
       - name: Publish to PyPI
         if: success()
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -43,10 +47,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.extract_tag.outputs.TAG_NAME }}
+          release_name: Release ${{ steps.extract_tag.outputs.TAG_NAME }}
           draft: false
-          prerelease: true
+          prerelease: false
 
       - name: Upload Release Assets
         uses: AButler/upload-release-assets@v3.0
