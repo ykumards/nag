@@ -13,6 +13,7 @@ rich = "^13.8.1"
 sqlalchemy = "^2.0.35"
 sqlite-vec = "^0.1.2"
 pyyaml = "^6.0.2"
+bump2version = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

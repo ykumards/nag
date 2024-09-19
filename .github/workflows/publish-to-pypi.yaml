@@ -21,10 +21,23 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install poetry
+                  pip install poetry bump2version
 
-            - name: Install project dependencies
-              run: poetry install
+            - name: Update version in pyproject.toml based on tag
+              run: |
+                  TAG_NAME=${GITHUB_REF#refs/tags/}
+                  bump2version --new-version $TAG_NAME --allow-dirty --no-commit
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Commit version bump
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git commit -am "Bump version to $TAG_NAME"
+                  git push
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build the package
               run: poetry build
