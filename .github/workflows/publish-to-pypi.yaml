@@ -34,9 +34,6 @@ jobs:
         if: success()
         run: poetry build
 
-      - name: Publish to PyPI
-        if: success()
-        uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Create GitHub Release
         if: success()
