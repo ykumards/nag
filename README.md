@@ -1,6 +1,6 @@
 # nag 🐍️
 
-![Tests](https://github.com/ykumards/nag/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/ykumards/nag/actions/workflows/test.yaml/badge.svg)
 [![Version](https://img.shields.io/pypi/v/nag.svg)](https://pypi.org/project/nag/)
 [![Downloads](https://static.pepy.tech/badge/nag)](https://pepy.tech/project/nag)
 
