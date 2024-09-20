@@ -56,7 +56,7 @@ nag block 09:00 10:00 "Meeting with team"
 This will add a task from 9:00 AM to 10:00 AM with the description "Meeting with team" for today by default. You can also specify a date:
 
 ```bash
-nag block 09:00 10:00 "Meeting with team" --task-date 09/19
+nag block 09:00 10:00 "Meeting with team" --date 09/19
 ```
 
 #### 2. Showing your schedule
